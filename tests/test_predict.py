@@ -40,7 +40,8 @@ def test_predict_ham_message():
 def test_predict_batch():
     clf = _fitted_classifier()
     out = clf.predict_batch(["free prize now", "see you later"])
-    assert len(out) == 2 and all("label" in o for o in out)
+    assert len(out) == 2
+    assert all("label" in o and "spam_probability" in o for o in out)
 
 
 def test_load_missing_raises(tmp_path):
