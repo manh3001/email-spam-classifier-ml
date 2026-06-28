@@ -24,6 +24,7 @@ def test_loads_two_columns(tmp_path):
 def test_maps_labels_to_ints(tmp_path):
     df = load_dataset(_write_csv(tmp_path))
     assert sorted(df["label"].tolist()) == [0, 1]
+    assert df["label"].dtype == int
 
 
 def test_drops_junk_columns(tmp_path):
@@ -39,5 +40,12 @@ def test_missing_file_raises(tmp_path):
 def test_missing_columns_raises(tmp_path):
     p = tmp_path / "bad.csv"
     p.write_text("a,b\n1,2\n", encoding="latin-1")
+    with pytest.raises(ValueError):
+        load_dataset(p)
+
+
+def test_unknown_label_raises(tmp_path):
+    p = tmp_path / "weird.csv"
+    p.write_text("v1,v2\nbogus,hello there\n", encoding="latin-1")
     with pytest.raises(ValueError):
         load_dataset(p)
