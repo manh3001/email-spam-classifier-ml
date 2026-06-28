@@ -9,6 +9,7 @@ venv/
 
 # Model files
 *.pkl
+models/
 
 # Notebook checkpoints
 .ipynb_checkpoints/
