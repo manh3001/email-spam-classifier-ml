@@ -5,7 +5,7 @@ import logging
 import sys
 from pathlib import Path
 
-from .config import MODEL_PATH
+from .config import DATA_PATH, MODEL_PATH
 from .predict import SpamClassifier
 from .train import train
 
@@ -28,8 +28,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _run_train(args) -> int:
-    from .config import DATA_PATH
-
     train(
         data_path=args.data or DATA_PATH,
         model_path=args.model,

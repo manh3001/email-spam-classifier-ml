@@ -39,3 +39,4 @@ def test_predict_from_file(tmp_path, capsys):
 def test_predict_without_model_errors(tmp_path, capsys):
     rc = main(["predict", "hello", "--model", str(tmp_path / "none.joblib")])
     assert rc != 0
+    assert "Error" in capsys.readouterr().err
