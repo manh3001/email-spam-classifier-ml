@@ -9,6 +9,8 @@ from sklearn.metrics import (
     accuracy_score,
     classification_report,
     f1_score,
+    precision_score,
+    recall_score,
 )
 from sklearn.model_selection import train_test_split
 
@@ -50,7 +52,7 @@ def train(
     )
     logger.info("Train=%d Test=%d", len(X_train), len(X_test))
 
-    best = None  # (name, pipeline, accuracy, spam_f1)
+    best = None  # (name, pipeline, accuracy, spam_f1, y_pred)
     for name, pipe in build_pipelines().items():
         pipe.fit(X_train, y_train)
         y_pred = pipe.predict(X_test)
@@ -61,18 +63,23 @@ def train(
         print(f"Accuracy: {acc:.4f}")
         print(classification_report(y_test, y_pred, zero_division=0))
         if best is None or spam_f1 > best[3]:
-            best = (name, pipe, acc, spam_f1)
+            best = (name, pipe, acc, spam_f1, y_pred)
 
-    best_name, best_pipe, best_acc, best_f1 = best
+    best_name, best_pipe, best_acc, best_f1, best_pred = best
     print(f"\nBest model: {best_name} (spam F1={best_f1:.4f})")
 
     model_path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(best_pipe, model_path)
 
+    spam_precision = precision_score(y_test, best_pred, pos_label=1, zero_division=0)
+    spam_recall = recall_score(y_test, best_pred, pos_label=1, zero_division=0)
+
     summary = {
         "best_model": best_name,
         "accuracy": round(float(best_acc), 4),
         "spam_f1": round(float(best_f1), 4),
+        "spam_precision": round(float(spam_precision), 4),
+        "spam_recall": round(float(spam_recall), 4),
     }
     metrics_path.parent.mkdir(parents=True, exist_ok=True)
     metrics_path.write_text(json.dumps(summary, indent=2))

@@ -7,7 +7,7 @@ pipeline artifact.
 
 ## Project layout
 
-```
+```text
 src/spam_classifier/   # package: data, preprocessing, model, train, predict, cli
 tests/                 # pytest suite
 data/spam.csv          # dataset (UCI SMS Spam Collection format)

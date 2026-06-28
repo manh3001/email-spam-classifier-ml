@@ -35,6 +35,7 @@ def test_train_writes_artifacts_and_returns_summary(tmp_path):
     saved = json.loads(metrics_path.read_text())
     assert saved["best_model"] == summary["best_model"]
     assert "accuracy" in saved and "spam_f1" in saved
+    assert "spam_precision" in saved and "spam_recall" in saved
 
 
 def test_trained_model_is_usable(tmp_path):

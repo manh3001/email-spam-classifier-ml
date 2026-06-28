@@ -5,7 +5,7 @@ import logging
 import sys
 from pathlib import Path
 
-from .config import DATA_PATH, MODEL_PATH
+from .config import DATA_PATH, METRICS_PATH, MODEL_PATH
 from .predict import SpamClassifier
 from .train import train
 
@@ -19,6 +19,7 @@ def _build_parser() -> argparse.ArgumentParser:
     t.add_argument("--model", default=str(MODEL_PATH))
     t.add_argument("--test-size", type=float, default=0.2)
     t.add_argument("--seed", type=int, default=42)
+    t.add_argument("--metrics", default=str(METRICS_PATH))
 
     p = sub.add_parser("predict", help="Classify a message or a file of messages")
     p.add_argument("message", nargs="?", default=None)
@@ -31,6 +32,7 @@ def _run_train(args) -> int:
     train(
         data_path=args.data or DATA_PATH,
         model_path=args.model,
+        metrics_path=args.metrics,
         test_size=args.test_size,
         random_state=args.seed,
     )
