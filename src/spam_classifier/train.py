@@ -1,5 +1,6 @@
 """Train, compare, and persist the best spam-classification pipeline."""
 
+import joblib
 import json
 import logging
 from pathlib import Path
@@ -66,8 +67,6 @@ def train(
     print(f"\nBest model: {best_name} (spam F1={best_f1:.4f})")
 
     model_path.parent.mkdir(parents=True, exist_ok=True)
-    import joblib
-
     joblib.dump(best_pipe, model_path)
 
     summary = {
@@ -77,5 +76,5 @@ def train(
     }
     metrics_path.parent.mkdir(parents=True, exist_ok=True)
     metrics_path.write_text(json.dumps(summary, indent=2))
-    logger.info("Saved model to %s", model_path)
+    logger.info("Saved model -> %s | metrics -> %s", model_path, metrics_path)
     return summary

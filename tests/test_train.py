@@ -3,14 +3,18 @@ import json
 from spam_classifier.train import train
 
 
-def test_train_writes_artifacts_and_returns_summary(tmp_path):
-    # Build a tiny but learnable dataset CSV in the v1,v2 format.
+def _make_learnable_csv(tmp_path):
     rows = ["v1,v2,,,"]
     for _ in range(15):
         rows.append('spam,"free money prize winner click now claim cash",,,')
         rows.append('ham,"hey are we meeting for lunch tomorrow at noon",,,')
     csv = tmp_path / "spam.csv"
     csv.write_text("\n".join(rows) + "\n", encoding="latin-1")
+    return csv
+
+
+def test_train_writes_artifacts_and_returns_summary(tmp_path):
+    csv = _make_learnable_csv(tmp_path)
 
     model_path = tmp_path / "models" / "pipe.joblib"
     metrics_path = tmp_path / "models" / "metrics.json"
@@ -30,15 +34,11 @@ def test_train_writes_artifacts_and_returns_summary(tmp_path):
     assert metrics_path.exists()
     saved = json.loads(metrics_path.read_text())
     assert saved["best_model"] == summary["best_model"]
+    assert "accuracy" in saved and "spam_f1" in saved
 
 
 def test_trained_model_is_usable(tmp_path):
-    rows = ["v1,v2,,,"]
-    for _ in range(15):
-        rows.append('spam,"free money prize winner click now claim cash",,,')
-        rows.append('ham,"hey are we meeting for lunch tomorrow at noon",,,')
-    csv = tmp_path / "spam.csv"
-    csv.write_text("\n".join(rows) + "\n", encoding="latin-1")
+    csv = _make_learnable_csv(tmp_path)
     model_path = tmp_path / "m.joblib"
 
     train(data_path=csv, model_path=model_path,
