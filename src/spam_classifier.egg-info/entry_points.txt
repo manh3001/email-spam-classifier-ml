@@ -1,2 +1,0 @@
-[console_scripts]
-spam-classify = spam_classifier.cli:main
