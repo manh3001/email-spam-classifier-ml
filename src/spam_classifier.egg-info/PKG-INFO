@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: spam-classifier
+Version: 0.1.0
+Summary: SMS spam classifier (TF-IDF + scikit-learn)
+Requires-Python: >=3.10
+Requires-Dist: pandas==2.2.2
+Requires-Dist: numpy==1.26.4
+Requires-Dist: scikit-learn==1.5.1
+Requires-Dist: joblib==1.4.2
+Provides-Extra: dev
+Requires-Dist: pytest==8.2.2; extra == "dev"
+Requires-Dist: matplotlib==3.9.0; extra == "dev"
