@@ -42,6 +42,22 @@ Predict a file of messages (one per line):
 spam-classify predict --file test_messages.txt
 ```
 
+## Web UI
+
+Start the API + web page (requires a trained model — run `spam-classify train` first):
+
+```bash
+spam-serve            # serves http://127.0.0.1:8000
+```
+
+Open the URL in a browser to classify single or batch messages, see a spam-confidence bar, and view the deployed model's metrics. The JSON API is also usable directly:
+
+```bash
+curl -X POST http://127.0.0.1:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"messages": ["Free prize, click now!", "see you tomorrow"]}'
+```
+
 ## Testing
 
 ```bash
