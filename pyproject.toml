@@ -12,13 +12,16 @@ dependencies = [
     "numpy==1.26.4",
     "scikit-learn==1.5.1",
     "joblib==1.4.2",
+    "fastapi==0.115.0",
+    "uvicorn[standard]==0.30.6",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest==8.2.2", "matplotlib==3.9.0"]
+dev = ["pytest==8.2.2", "matplotlib==3.9.0", "httpx==0.27.2"]
 
 [project.scripts]
 spam-classify = "spam_classifier.cli:main"
+spam-serve = "spam_classifier.api:serve"
 
 [tool.setuptools.packages.find]
 where = ["src"]
