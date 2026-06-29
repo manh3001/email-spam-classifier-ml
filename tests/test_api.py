@@ -84,3 +84,11 @@ def test_metrics_returns_json(tmp_path):
 def test_metrics_missing_is_404(tmp_path):
     client = TestClient(create_app(classifier=_fitted_classifier(), metrics_path=tmp_path / "none.json"))
     assert client.get("/metrics").status_code == 404
+
+
+def test_root_serves_html():
+    client = TestClient(create_app(classifier=_fitted_classifier()))
+    r = client.get("/")
+    assert r.status_code == 200
+    assert "text/html" in r.headers["content-type"]
+    assert "Spam Classifier" in r.text

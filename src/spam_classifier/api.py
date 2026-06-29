@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from .config import METRICS_PATH, MODEL_PATH
@@ -51,6 +53,12 @@ def create_app(classifier=None, model_path=MODEL_PATH, metrics_path=METRICS_PATH
         if not path.exists():
             raise HTTPException(status_code=404, detail="No metrics yet — train the model first.")
         return json.loads(path.read_text(encoding="utf-8"))
+
+    app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
+
+    @app.get("/")
+    def index() -> FileResponse:
+        return FileResponse(WEB_DIR / "index.html")
 
     return app
 
