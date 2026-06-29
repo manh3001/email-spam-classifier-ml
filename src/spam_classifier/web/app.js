@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 function showBanner(msg) {
   const b = $("status-banner");
@@ -13,12 +14,14 @@ function barColor(prob) {
   return `hsl(${hue}, 70%, 45%)`;
 }
 function barHTML(prob) {
-  const pct = Math.round(prob * 100);
-  return `<div class="bar"><span style="width:${pct}%;background:${barColor(prob)}"></span></div>
+  const p = Math.min(1, Math.max(0, Number.isFinite(prob) ? prob : 0));
+  const pct = Math.round(p * 100);
+  return `<div class="bar"><span style="width:${pct}%;background:${barColor(p)}"></span></div>
           <small>${pct}% spam</small>`;
 }
 function labelTag(label) {
-  return `<span class="label-tag label-${label}">${label}</span>`;
+  const cls = label === "SPAM" ? "SPAM" : "HAM";
+  return `<span class="label-tag label-${cls}">${esc(label)}</span>`;
 }
 
 async function postPredict(messages) {
@@ -41,10 +44,10 @@ async function loadMetrics() {
     const m = await res.json();
     const fmt = (v) => (typeof v === "number" ? v.toFixed(3) : v);
     $("metrics-content").innerHTML = `
-      <p><strong>Model:</strong> ${m.best_model ?? "?"}</p>
-      <p><strong>Spam F1:</strong> ${fmt(m.spam_f1)} &nbsp;
-         <strong>Precision:</strong> ${fmt(m.spam_precision)} &nbsp;
-         <strong>Recall:</strong> ${fmt(m.spam_recall)}</p>`;
+      <p><strong>Model:</strong> ${esc(m.best_model ?? "?")}</p>
+      <p><strong>Spam F1:</strong> ${esc(fmt(m.spam_f1))} &nbsp;
+         <strong>Precision:</strong> ${esc(fmt(m.spam_precision))} &nbsp;
+         <strong>Recall:</strong> ${esc(fmt(m.spam_recall))}</p>`;
     $("metrics-panel").classList.remove("hidden");
   } catch (_) { /* leave hidden */ }
 }
@@ -75,7 +78,7 @@ $("batch-btn").addEventListener("click", async () => {
     const results = await postPredict(lines);
     const tbody = $("batch-result").querySelector("tbody");
     tbody.innerHTML = results.map((r) =>
-      `<tr><td>${r.text.replace(/</g, "&lt;")}</td><td>${labelTag(r.label)}</td><td>${barHTML(r.spam_probability)}</td></tr>`
+      `<tr><td>${esc(r.text)}</td><td>${labelTag(r.label)}</td><td>${barHTML(r.spam_probability)}</td></tr>`
     ).join("");
     $("batch-result").classList.remove("hidden");
   } catch (err) { showBanner(err.message); }
