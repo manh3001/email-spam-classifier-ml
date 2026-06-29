@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spam Classifier</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <h1>📧 Spam Classifier</h1>
+
+    <section id="metrics-panel" class="card hidden">
+      <h2>Deployed model</h2>
+      <div id="metrics-content"></div>
+    </section>
+
+    <div id="status-banner" class="banner hidden"></div>
+
+    <section class="card">
+      <h2>Classify one message</h2>
+      <textarea id="single-input" rows="3" placeholder="Paste a message…"></textarea>
+      <button id="single-btn" disabled>Classify</button>
+      <div id="single-result"></div>
+    </section>
+
+    <section class="card">
+      <h2>Classify many (one per line)</h2>
+      <textarea id="batch-input" rows="6" placeholder="One message per line…"></textarea>
+      <div class="row">
+        <input type="file" id="batch-file" accept=".txt">
+        <button id="batch-btn">Classify all</button>
+      </div>
+      <table id="batch-result" class="hidden">
+        <thead><tr><th>Message</th><th>Label</th><th>Spam probability</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
