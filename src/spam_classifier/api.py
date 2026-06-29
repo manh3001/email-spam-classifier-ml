@@ -1,5 +1,6 @@
 """FastAPI backend serving the spam classifier UI and JSON API."""
 
+import json
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -43,6 +44,13 @@ def create_app(classifier=None, model_path=MODEL_PATH, metrics_path=METRICS_PATH
             raise HTTPException(status_code=400, detail="Provide at least one non-empty message.")
         results = app.state.classifier.predict_batch(texts)
         return [{"text": t, **r} for t, r in zip(texts, results)]
+
+    @app.get("/metrics")
+    def metrics() -> dict:
+        path = app.state.metrics_path
+        if not path.exists():
+            raise HTTPException(status_code=404, detail="No metrics yet — train the model first.")
+        return json.loads(path.read_text(encoding="utf-8"))
 
     return app
 

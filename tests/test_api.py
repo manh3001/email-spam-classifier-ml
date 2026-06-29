@@ -1,3 +1,5 @@
+import json
+
 from fastapi.testclient import TestClient
 
 from spam_classifier.api import create_app
@@ -68,3 +70,17 @@ def test_predict_no_model_is_503(tmp_path):
     client = TestClient(create_app(model_path=tmp_path / "none.joblib"))
     r = client.post("/predict", json={"messages": ["hello"]})
     assert r.status_code == 503
+
+
+def test_metrics_returns_json(tmp_path):
+    mpath = tmp_path / "metrics.json"
+    mpath.write_text(json.dumps({"best_model": "naive_bayes", "spam_f1": 1.0}), encoding="utf-8")
+    client = TestClient(create_app(classifier=_fitted_classifier(), metrics_path=mpath))
+    r = client.get("/metrics")
+    assert r.status_code == 200
+    assert r.json()["best_model"] == "naive_bayes"
+
+
+def test_metrics_missing_is_404(tmp_path):
+    client = TestClient(create_app(classifier=_fitted_classifier(), metrics_path=tmp_path / "none.json"))
+    assert client.get("/metrics").status_code == 404
